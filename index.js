@@ -48,13 +48,6 @@ app.post('/uploadFile', (req, res) => {
     });
 });
 
-// Serve uploaded files (optional)
-app.use('/uploads', express.static('uploads'));
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
 
 app.get('/uploadedFiles', (req, res) => {
     const filenames = fs.readdirSync(uploadDir);
@@ -67,5 +60,22 @@ app.get('/uploadedFiles', (req, res) => {
         fileurls.push("http://localhost:3000/uploads/" + filename);
     });
 
-    res.end(JSON.stringify(fileurls));
+    const files = [];
+
+    fileurls.forEach((fileurl) => {
+        const file = { "file" : fileurl };
+        files.push(file);
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(files));
+    // res.end(files.toString());
 })
+
+// Serve uploaded files (optional)
+app.use('/uploads', express.static('uploads'));
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
